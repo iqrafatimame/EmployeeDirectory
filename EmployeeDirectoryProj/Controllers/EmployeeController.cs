@@ -40,7 +40,6 @@ namespace EmployeeDirectoryProj.Controllers
             {
                 return NotFound();
             }
-
             return View(department);
         }
 
@@ -89,6 +88,11 @@ namespace EmployeeDirectoryProj.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewBag.DepartmentID = _context.Departments.Select(x => new SelectListItem
+            {
+                Text = x.DepartmentName,
+                Value = x.DepartmentID.ToString()
+            }).ToList();
             if (id == null)
             {
                 return NotFound();

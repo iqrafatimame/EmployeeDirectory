@@ -15,9 +15,11 @@ namespace EmployeeDirectoryProj.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
-        public DepartmentController(IDepartmentService departmentService)
+        private readonly IEmployeeService _employeeService;
+        public DepartmentController(IDepartmentService departmentService, IEmployeeService employeeService)
         {
             _departmentService = departmentService;
+            _employeeService = employeeService;
         }
 
        
