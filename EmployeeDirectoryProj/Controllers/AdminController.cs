@@ -13,11 +13,14 @@ namespace EmployeeDirectoryProj.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public AdminController(UserManager<IdentityUser> userManager,
-                              SignInManager<IdentityUser> signInManager)
+                              SignInManager<IdentityUser> signInManager,
+                              RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         // GET: REgister User
@@ -43,6 +46,7 @@ namespace EmployeeDirectoryProj.Controllers
 
                     if (result.Succeeded)
                     {
+                        _userManager.AddToRoleAsync(user, "Employee").Wait();
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
                         return RedirectToAction("index", "Home");
@@ -76,18 +80,31 @@ namespace EmployeeDirectoryProj.Controllers
             if (ModelState.IsValid)
             {
                 try {
-                    var result = await _signInManager.PasswordSignInAsync( user.Email, user.Password, user.RememberMe,  false);
+                    var result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, false);
 
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Index", "Home");
+                        var findUser = await _userManager.FindByEmailAsync(user.Email);
+                        var roles = await _userManager.GetRolesAsync(findUser);
+                        string role = roles.FirstOrDefault();
+                        if (role.Equals("Admin")) 
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else if(role.Equals("Employee"))
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return NotFound();
+                        } 
                     }
                 }
                 catch
                 {
                     ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-                }
-            
+                } 
             }
             ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             return View(user);

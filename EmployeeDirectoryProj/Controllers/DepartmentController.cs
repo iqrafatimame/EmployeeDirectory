@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeDirectoryProj.Controllers
 {
+    
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
@@ -22,7 +23,7 @@ namespace EmployeeDirectoryProj.Controllers
             _employeeService = employeeService;
         }
 
-       
+        
         public async Task<IActionResult> Index()
         {
             var departments = await _departmentService.GetAllAsync();

@@ -2,6 +2,7 @@
 using EmployeeDirectoryProj.Models;
 using EmployeeDirectoryProj.Services.Interfaces;
 using EmployeeDirectoryProj.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeDirectoryProj.Controllers
 {
+    
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
@@ -22,6 +24,7 @@ namespace EmployeeDirectoryProj.Controllers
             _context = context;
         }
         
+       
         public async Task<IActionResult> Index()
         {
             var emp = await _employeeService.GetAllAsync();
@@ -44,6 +47,7 @@ namespace EmployeeDirectoryProj.Controllers
         }
 
         // GET: Create Action to add Info to our database
+        
         [HttpGet]
         public IActionResult Create()
         {
@@ -93,6 +97,7 @@ namespace EmployeeDirectoryProj.Controllers
                 Text = x.DepartmentName,
                 Value = x.DepartmentID.ToString()
             }).ToList();
+
             if (id == null)
             {
                 return NotFound();

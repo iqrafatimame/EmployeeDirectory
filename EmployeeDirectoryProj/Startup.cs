@@ -3,6 +3,7 @@ using EmployeeDirectoryProj.Repositories;
 using EmployeeDirectoryProj.Repositories.Interfaces;
 using EmployeeDirectoryProj.Services;
 using EmployeeDirectoryProj.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,7 +38,7 @@ namespace EmployeeDirectoryProj
                     Configuration.GetConnectionString("DefaultConnection")));
            
             // Adding identity
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services to the container
@@ -52,12 +53,17 @@ namespace EmployeeDirectoryProj
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IDepartmentService, DepartmentService>();
 
+            services.AddMvcCore().AddAuthorization();
+                
             // Adding Automapper configuration
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, 
+                               IWebHostEnvironment env,
+                               UserManager<IdentityUser> userManager,
+                               RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -76,6 +82,9 @@ namespace EmployeeDirectoryProj
 
             app.UseAuthorization();
             app.UseAuthentication();
+
+            SeedData.Seed(userManager, roleManager);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

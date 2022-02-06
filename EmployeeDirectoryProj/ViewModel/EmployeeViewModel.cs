@@ -23,6 +23,7 @@ namespace EmployeeDirectoryProj.ViewModel
         public string Address { get; set; }
 
         [DisplayName("Email")]
+
         public string Email { get; set; }
 
         [DisplayName("Phone Number")]
