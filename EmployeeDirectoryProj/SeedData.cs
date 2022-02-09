@@ -41,14 +41,6 @@ namespace EmployeeDirectoryProj
                 };
                var result = roleManager.CreateAsync(role).Result;
             }
-            if (!roleManager.RoleExistsAsync("Employee").Result)
-            {
-                var role = new IdentityRole
-                {
-                    Name = "Employee"
-                };
-                var result = roleManager.CreateAsync(role).Result;
-            }
         }
     }
 }

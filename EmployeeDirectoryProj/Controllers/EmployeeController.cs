@@ -47,7 +47,8 @@ namespace EmployeeDirectoryProj.Controllers
         }
 
         // GET: Create Action to add Info to our database
-        
+
+        // [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
         {

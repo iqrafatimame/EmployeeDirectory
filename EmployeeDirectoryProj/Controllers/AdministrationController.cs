@@ -57,5 +57,12 @@ namespace EmployeeDirectoryProj.Controllers
             }
             return View(model);
         }
+    
+        [HttpGet]
+        public IActionResult ListUser()
+        {
+            var users = _userManager.Users;
+            return View(users);
+        }
     }
 }

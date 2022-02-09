@@ -31,6 +31,7 @@ namespace EmployeeDirectoryProj.ViewModel
 
         [ForeignKey("DepartmentID")]
         public int DepartmentID { get; set; }
+        public string DepartmentName { get; set; }
         public Department departments { get; set; }
         [Display(Name ="Department")]
         public string SelectedDepartment { get; set; }

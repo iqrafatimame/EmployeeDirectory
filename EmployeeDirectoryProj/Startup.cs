@@ -3,11 +3,12 @@ using EmployeeDirectoryProj.Repositories;
 using EmployeeDirectoryProj.Repositories.Interfaces;
 using EmployeeDirectoryProj.Services;
 using EmployeeDirectoryProj.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,7 @@ namespace EmployeeDirectoryProj
         {
             Configuration = configuration;
         }
-
+        
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -38,7 +39,8 @@ namespace EmployeeDirectoryProj
                     Configuration.GetConnectionString("DefaultConnection")));
            
             // Adding identity
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>()
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services to the container
@@ -53,7 +55,12 @@ namespace EmployeeDirectoryProj
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IDepartmentService, DepartmentService>();
 
-            services.AddMvcCore().AddAuthorization();
+
+            services.AddMvcCore(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+               //  options.Filters.Add(new AuthorizeFilter(policy));
+            }).AddXmlSerializerFormatters();
                 
             // Adding Automapper configuration
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -75,21 +82,23 @@ namespace EmployeeDirectoryProj
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            SeedData.Seed(userManager, roleManager);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            SeedData.Seed(userManager, roleManager);
+            
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                
             });
         }
     }
