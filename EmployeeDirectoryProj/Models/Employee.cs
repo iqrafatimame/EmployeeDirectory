@@ -28,6 +28,7 @@ namespace EmployeeDirectoryProj.Models
 
         [ForeignKey("DepartmentID")]
         public int DepartmentID { get; set; }
+        public string DepartmentName { get; set; }
   
         public Department departments { get; set; }
     }

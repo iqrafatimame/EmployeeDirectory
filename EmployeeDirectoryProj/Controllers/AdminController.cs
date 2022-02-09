@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeDirectoryProj.Controllers
 {
+    
     public class AdminController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -48,8 +49,7 @@ namespace EmployeeDirectoryProj.Controllers
                     {
                         _userManager.AddToRoleAsync(user, "Employee").Wait();
                         await _signInManager.SignInAsync(user, isPersistent: false);
-
-                        return RedirectToAction("index", "Home");
+                        return RedirectToAction("Index", "Home");
                     }
                     foreach (var error in result.Errors)
                     {
@@ -66,7 +66,7 @@ namespace EmployeeDirectoryProj.Controllers
 
         // GET: Login User
         [HttpGet]
-        [AllowAnonymous]
+       
         public IActionResult Login()
         {
             return View();
@@ -74,7 +74,7 @@ namespace EmployeeDirectoryProj.Controllers
 
         // POST : Login User
         [HttpPost]
-        [AllowAnonymous]
+        
         public async Task<IActionResult> Login(LoginViewModel user)
         {
             if (ModelState.IsValid)
@@ -84,21 +84,7 @@ namespace EmployeeDirectoryProj.Controllers
 
                     if (result.Succeeded)
                     {
-                        var findUser = await _userManager.FindByEmailAsync(user.Email);
-                        var roles = await _userManager.GetRolesAsync(findUser);
-                        string role = roles.FirstOrDefault();
-                        if (role.Equals("Admin")) 
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-                        else if(role.Equals("Employee"))
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-                        else
-                        {
-                            return NotFound();
-                        } 
+                        return RedirectToAction("Index", "Home");
                     }
                 }
                 catch
